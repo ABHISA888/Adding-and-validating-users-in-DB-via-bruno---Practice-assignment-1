@@ -1,13 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>Hello Express!</title>
+    <title>User Registration</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <h1>Hello Express!</h1>
-    <p>Showing <code>pages/index.html</code></p>
+    <div class="container">
+      <h1>User Registration</h1>
+      <form id="registrationForm">
+        <div class="form-group">
+          <label for="username">Username:</label>
+          <input type="text" id="username" name="username" required>
+        </div>
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input type="password" id="password" name="password" required>
+        </div>
+        <button type="submit">Register</button>
+      </form>
+      <div id="message"></div>
+    </div>
+    <script>
+      document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = {
+          username: document.getElementById('username').value,
+          email: document.getElementById('email').value,
+          password: document.getElementById('password').value
+        };
+        
+        try {
+          const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+          });
+          
+          const data = await response.json();
+          const messageDiv = document.getElementById('message');
+          messageDiv.textContent = data.message;
+          messageDiv.className = response.ok ? 'success' : 'error';
+          
+          if (response.ok) {
+            document.getElementById('registrationForm').reset();
+          }
+        } catch (error) {
+          document.getElementById('message').textContent = 'An error occurred. Please try again.';
+          document.getElementById('message').className = 'error';
+        }
+      });
+    </script>
   </body>
 </html>
